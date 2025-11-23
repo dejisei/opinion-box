@@ -3,7 +3,7 @@ const list = document.getElementById("suggestion-list");
 
 // 意見一覧を読み込み
 async function loadSuggestions() {
-  const res = await fetch("/api/suggestions");
+  const res = await fetch("https://opinion-box.onrender.com/api/suggestions");
   const suggestions = await res.json();
 
   list.innerHTML = suggestions
@@ -46,4 +46,3 @@ form.addEventListener("submit", async (e) => {
 
 
 loadSuggestions();
-
