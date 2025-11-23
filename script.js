@@ -24,18 +24,26 @@ form.addEventListener("submit", async (e) => {
   const name = document.getElementById("name").value;
   const message = document.getElementById("message").value;
 
-  const res = await fetch("/api/suggestions", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ name, message }),
-  });
+  try {
+    const res = await fetch("https://opinion-box.onrender.com/api/suggestions", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, message }),
+    });
 
-  if (res.ok) {
-    document.getElementById("message").value = "";
-    loadSuggestions();
-  } else {
-    alert("送信に失敗しました。");
+    if (res.ok) {
+      document.getElementById("message").value = "";
+      loadSuggestions(); // 投稿後にリストを再読み込み
+    } else {
+      const errorData = await res.json();
+      alert("送信に失敗しました: " + (errorData.error || ""));
+    }
+  } catch (err) {
+    console.error(err);
+    alert("送信に失敗しました。サーバーに接続できませんでした。");
   }
 });
 
+
 loadSuggestions();
+
