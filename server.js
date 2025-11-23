@@ -11,8 +11,7 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static("."));
 
-// 🔥 Firebase接続設定（Render対応）
-// Render の環境変数から読み込む（本番）
+// Firebase 接続設定
 if (process.env.FIREBASE_PROJECT_ID) {
   admin.initializeApp({
     credential: admin.credential.cert({
@@ -22,29 +21,21 @@ if (process.env.FIREBASE_PROJECT_ID) {
       client_email: process.env.FIREBASE_CLIENT_EMAIL,
     }),
   });
-  console.log("🔥 Firebase initialized from Render environment variables");
 } else {
-  // ローカル開発用
   const serviceAccount = require("./firebase-key.json");
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
-  console.log("🔥 Firebase initialized from local firebase-key.json");
 }
 
 const db = admin.firestore();
 const collection = db.collection("suggestions");
 
-// ================================
-// GET: 投稿一覧を取得
-// ================================
+// 投稿一覧取得
 app.get("/api/suggestions", async (req, res) => {
   try {
     const snapshot = await collection.orderBy("timestamp", "desc").get();
-    const suggestions = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...doc.data(),
-    }));
+    const suggestions = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     res.json(suggestions);
   } catch (err) {
     console.error(err);
@@ -52,21 +43,12 @@ app.get("/api/suggestions", async (req, res) => {
   }
 });
 
-// ================================
-// POST: 新規投稿
-// ================================
+// 投稿追加
 app.post("/api/suggestions", async (req, res) => {
   const { name, message } = req.body;
+  if (!message) return res.status(400).json({ error: "メッセージを入力してください。" });
 
-  if (!message) {
-    return res.status(400).json({ error: "メッセージを入力してください。" });
-  }
-
-  const suggestion = {
-    name: name || "匿名",
-    message,
-    timestamp: new Date().toISOString(),
-  };
+  const suggestion = { name: name || "匿名", message, timestamp: new Date().toISOString() };
 
   try {
     const docRef = await collection.add(suggestion);
