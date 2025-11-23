@@ -1,16 +1,16 @@
+
 {
-    "name": "digital-suggestion-box-firestore",
-    "version": "1.0.0",
-    "description": "A simple digital suggestion box using Express.js and Firestore",
-    "main": "server.js",
-    "scripts": {
-      "start": "node server.js"
-    },
-    "dependencies": {
-      "express": "^4.19.2",
-      "body-parser": "^1.20.2",
-      "cors": "^2.8.5",
-      "firebase-admin": "^12.0.0"
-    }
+  "name": "digital-suggestion-box-firestore",
+  "version": "1.0.0",
+  "description": "A simple digital suggestion box using Express.js and Firestore",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "firebase-admin": "^12.0.0"
   }
-  
+}
