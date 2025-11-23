@@ -9,27 +9,35 @@ const PORT = process.env.PORT || 3000;
 // ミドルウェア
 app.use(cors());
 app.use(bodyParser.json());
-app.use(express.static("public"));
+app.use(express.static("."));
 
-// 🔑 Firebase接続設定
-// Render環境では環境変数を使って安全に接続する
-if (process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON) {
-  const serviceAccount = JSON.parse(process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON);
+// 🔥 Firebase接続設定（Render対応）
+// Render の環境変数から読み込む（本番）
+if (process.env.FIREBASE_PROJECT_ID) {
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert({
+      project_id: process.env.FIREBASE_PROJECT_ID,
+      private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+      private_key: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+      client_email: process.env.FIREBASE_CLIENT_EMAIL,
+    }),
   });
+  console.log("🔥 Firebase initialized from Render environment variables");
 } else {
-  // ローカル開発用（firebase-key.json を配置）
+  // ローカル開発用
   const serviceAccount = require("./firebase-key.json");
   admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
   });
+  console.log("🔥 Firebase initialized from local firebase-key.json");
 }
 
 const db = admin.firestore();
 const collection = db.collection("suggestions");
 
-// ✅ 投稿一覧取得
+// ================================
+// GET: 投稿一覧を取得
+// ================================
 app.get("/api/suggestions", async (req, res) => {
   try {
     const snapshot = await collection.orderBy("timestamp", "desc").get();
@@ -44,7 +52,9 @@ app.get("/api/suggestions", async (req, res) => {
   }
 });
 
-// ✉️ 投稿追加
+// ================================
+// POST: 新規投稿
+// ================================
 app.post("/api/suggestions", async (req, res) => {
   const { name, message } = req.body;
 
@@ -67,4 +77,4 @@ app.post("/api/suggestions", async (req, res) => {
   }
 });
 
-app.listen(PORT, () => console.log(` Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
