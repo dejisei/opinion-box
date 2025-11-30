@@ -42,7 +42,7 @@ form.addEventListener("submit", async (e) => {
 
     if (res.ok) {
       document.getElementById("message").value = "";
-      alert("あなたの意見は送信されました！");
+      // alert("あなたの意見は送信されました！");
       loadSuggestions();
     } else {
       const errorData = await res.json().catch(() => ({ error: "サーバーエラー" }));
@@ -55,3 +55,4 @@ form.addEventListener("submit", async (e) => {
 });
 
 loadSuggestions();
+
