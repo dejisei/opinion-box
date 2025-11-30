@@ -4,7 +4,7 @@ const list = document.getElementById("suggestion-list");
 // Render 本番URL
 const API_URL = "https://opinion-box.onrender.com/api/suggestions";
 
-// // 投稿一覧取得
+// 投稿一覧取得　←script-view.jsに移動済み
 // async function loadSuggestions() {
 //   try {
 //     const res = await fetch(API_URL);
@@ -42,6 +42,7 @@ form.addEventListener("submit", async (e) => {
 
     if (res.ok) {
       document.getElementById("message").value = "";
+      alert("あなたの意見は送信されました！");
       loadSuggestions();
     } else {
       const errorData = await res.json().catch(() => ({ error: "サーバーエラー" }));
@@ -54,4 +55,3 @@ form.addEventListener("submit", async (e) => {
 });
 
 loadSuggestions();
-
