@@ -13,7 +13,7 @@ async function loadSuggestions() {
     list.innerHTML = suggestions
       .map(
         (s) => `
-        <li data-id="${s.id}" class="${s.status === 'unread' ? 'unread' : ''}">
+        <li data-id="${s.id}" class="${s.status === 'new' ? 'unread' : ''}">
           <strong>${s.name}</strong>
           （${new Date(s.timestamp).toLocaleString("ja-JP")}）<br />
           ${s.message}<br /><br />
