@@ -72,4 +72,5 @@ async function updateStatus(id, status) {
 
 
 
+
 loadSuggestions();
