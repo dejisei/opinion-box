@@ -52,13 +52,13 @@ function addClickEvents() {
 
 // API へ PATCH（サーバーの仕様に完全準拠）
 async function updateStatus(id, status) {
+  const endpoint = status === "read"
+    ? `${API_URL}/${id}/read`
+    : `${API_URL}/${id}/unread`;
+
   try {
-    const res = await fetch(`${API_URL}/${id}/status`, {
+    const res = await fetch(endpoint, {
       method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ status }),
     });
 
     if (!res.ok) {
@@ -69,6 +69,7 @@ async function updateStatus(id, status) {
     console.error(err);
   }
 }
+
 
 
 loadSuggestions();
