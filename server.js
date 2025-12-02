@@ -31,11 +31,16 @@ if (process.env.FIREBASE_PROJECT_ID) {
 const db = admin.firestore();
 const collection = db.collection("suggestions");
 
-// 投稿一覧取得
+/* ------------------------------
+   投稿一覧取得
+--------------------------------*/
 app.get("/api/suggestions", async (req, res) => {
   try {
     const snapshot = await collection.orderBy("timestamp", "desc").get();
-    const suggestions = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    const suggestions = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
     res.json(suggestions);
   } catch (err) {
     console.error(err);
@@ -43,7 +48,9 @@ app.get("/api/suggestions", async (req, res) => {
   }
 });
 
-// 投稿追加
+/* ------------------------------
+   投稿追加
+--------------------------------*/
 app.post("/api/suggestions", async (req, res) => {
   const { name, message } = req.body;
   if (!message) return res.status(400).json({ error: "メッセージを入力してください。" });
@@ -52,7 +59,7 @@ app.post("/api/suggestions", async (req, res) => {
     name: name || "匿名",
     message,
     timestamp: new Date().toISOString(),
-    status: "new"
+    status: "new",
   };
 
   try {
@@ -64,10 +71,34 @@ app.post("/api/suggestions", async (req, res) => {
   }
 });
 
+/* ------------------------------
+   ステータス更新（汎用API）
+   PATCH /api/suggestions/:id/status
+--------------------------------*/
+app.patch("/api/suggestions/:id/status", async (req, res) => {
+  const id = req.params.id;
+  const { status } = req.body;
+
+  if (!status) {
+    return res.status(400).json({ error: "status が必要です。" });
+  }
+
+  try {
+    await collection.doc(id).update({ status });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "ステータス更新に失敗しました。" });
+  }
+});
+
+/* ------------------------------
+   過去互換API（必要なら使用可能）
+--------------------------------*/
+
 // 既読にする
 app.patch("/api/suggestions/:id/read", async (req, res) => {
   const id = req.params.id;
-
   try {
     await collection.doc(id).update({ status: "read" });
     res.json({ success: true });
@@ -80,7 +111,6 @@ app.patch("/api/suggestions/:id/read", async (req, res) => {
 // 未読に戻す
 app.patch("/api/suggestions/:id/unread", async (req, res) => {
   const id = req.params.id;
-
   try {
     await collection.doc(id).update({ status: "new" });
     res.json({ success: true });
@@ -89,5 +119,7 @@ app.patch("/api/suggestions/:id/unread", async (req, res) => {
     res.status(500).json({ error: "未読変更に失敗しました。" });
   }
 });
+
+/* ------------------------------ */
 
 app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
