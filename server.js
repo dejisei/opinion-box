@@ -48,7 +48,12 @@ app.post("/api/suggestions", async (req, res) => {
   const { name, message } = req.body;
   if (!message) return res.status(400).json({ error: "メッセージを入力してください。" });
 
-  const suggestion = { name: name || "匿名", message, timestamp: new Date().toISOString() };
+  const suggestion = {
+    name: name || "匿名",
+    message,
+    timestamp: new Date().toISOString(),
+    status: "new"
+  };
 
   try {
     const docRef = await collection.add(suggestion);
@@ -56,6 +61,32 @@ app.post("/api/suggestions", async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ error: "データ保存に失敗しました。" });
+  }
+});
+
+// 既読にする
+app.patch("/api/suggestions/:id/read", async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    await collection.doc(id).update({ status: "read" });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "既読更新に失敗しました。" });
+  }
+});
+
+// 未読に戻す
+app.patch("/api/suggestions/:id/unread", async (req, res) => {
+  const id = req.params.id;
+
+  try {
+    await collection.doc(id).update({ status: "new" });
+    res.json({ success: true });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: "未読変更に失敗しました。" });
   }
 });
 
