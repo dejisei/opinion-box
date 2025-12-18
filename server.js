@@ -102,8 +102,21 @@ app.patch("/api/suggestions/:id/unread", async (req, res) => {
   }
 });
 
+// 意見を削除
+app.delete("/api/suggestions/:id", async (req, res) => {
+  try {
+    await collection.doc(req.params.id).delete();
+    res.json({ success: true });
+  } catch (err) {
+    console.error("🔥 DELETE error:", err);
+    res.status(500).json({ error: "削除に失敗しました。" });
+  }
+});
+
+
 // Render のポートで起動する（絶対に必要）
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
   console.log(`🚀 Server running on Render PORT ${PORT}`)
 );
+
