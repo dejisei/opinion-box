@@ -4,13 +4,8 @@ let ADMIN_PASSWORD = sessionStorage.getItem("adminPassword");
 if (!ADMIN_PASSWORD) {
   ADMIN_PASSWORD = prompt("管理者パスワードを入力してください");
  if (!ADMIN_PASSWORD) {
-  ADMIN_PASSWORD = prompt("管理者パスワードを入力してください");
-  if (!ADMIN_PASSWORD) {
-    alert("パスワードが必要です");
-    location.href = "/"; // トップへ戻す
-    return; // throw しない
-  }
-  sessionStorage.setItem("adminPassword", ADMIN_PASSWORD);
+  alert("パスワードが必要です");
+  throw new Error("No admin password");
 }
 
   sessionStorage.setItem("adminPassword", ADMIN_PASSWORD);
