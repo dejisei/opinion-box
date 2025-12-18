@@ -1,3 +1,10 @@
+const ADMIN_PASSWORD = prompt("管理者パスワードを入力してください");
+
+if (!ADMIN_PASSWORD) {
+  alert("パスワードが必要です");
+  throw new Error("No password");
+}
+
 const list = document.getElementById("suggestion-list");
 
 const API_URL = "https://opinion-box.onrender.com/api/suggestions";
