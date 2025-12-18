@@ -41,6 +41,18 @@ try {
 const db = admin.firestore();
 const collection = db.collection("suggestions");
 
+//管理者認証ミドルウェア
+function adminAuth(req, res, next) {
+  const password = req.headers["x-admin-password"];
+
+  if (!password || password !== process.env.ADMIN_PASSWORD) {
+    return res.status(401).json({ error: "Unauthorized" });
+  }
+
+  next();
+}
+
+
 // 投稿一覧取得
 app.get("/api/suggestions", async (req, res) => {
   try {
@@ -119,4 +131,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
   console.log(`🚀 Server running on Render PORT ${PORT}`)
 );
+
 
