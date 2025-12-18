@@ -54,7 +54,7 @@ function adminAuth(req, res, next) {
 
 
 // 投稿一覧取得
-app.get("/api/suggestions", async (req, res) => {
+app.get("/api/suggestions", adminAuth, async (req, res) => {
   try {
     const snapshot = await collection.orderBy("timestamp", "desc").get();
     const suggestions = snapshot.docs.map((doc) => ({
@@ -63,10 +63,10 @@ app.get("/api/suggestions", async (req, res) => {
     }));
     res.json(suggestions);
   } catch (err) {
-    console.error("🔥 GET error:", err);
     res.status(500).json({ error: "データ取得中にエラーが発生しました。" });
   }
 });
+
 
 // 投稿追加
 app.post("/api/suggestions", async (req, res) => {
@@ -93,7 +93,7 @@ app.post("/api/suggestions", async (req, res) => {
 });
 
 // 既読にする
-app.patch("/api/suggestions/:id/read", async (req, res) => {
+app.patch("/api/suggestions/:id/read",adminAuth, async (req, res) => {
   try {
     await collection.doc(req.params.id).update({ status: "read" });
     res.json({ success: true });
@@ -104,7 +104,7 @@ app.patch("/api/suggestions/:id/read", async (req, res) => {
 });
 
 // 未読に戻す
-app.patch("/api/suggestions/:id/unread", async (req, res) => {
+app.patch("/api/suggestions/:id/unread",adminAuth, async (req, res) => {
   try {
     await collection.doc(req.params.id).update({ status: "new" });
     res.json({ success: true });
@@ -115,7 +115,7 @@ app.patch("/api/suggestions/:id/unread", async (req, res) => {
 });
 
 // 意見を削除
-app.delete("/api/suggestions/:id", async (req, res) => {
+app.delete("/api/suggestions/:id",adminAuth, async (req, res) => {
   try {
     await collection.doc(req.params.id).delete();
     res.json({ success: true });
@@ -131,5 +131,6 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
   console.log(`🚀 Server running on Render PORT ${PORT}`)
 );
+
 
 
