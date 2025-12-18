@@ -11,18 +11,20 @@ async function loadSuggestions() {
     const suggestions = await res.json();
 
     list.innerHTML = suggestions
-      .map(
-        (s) => `
-        <li data-id="${s.id}" class="${s.status === 'new' ? 'unread' : ''}">
-          <strong>${s.name}</strong>
-          （${new Date(s.timestamp).toLocaleString("ja-JP")}）<br />
-          ${s.message}<br /><br />
+  .map(
+    (s) => `
+    <li data-id="${s.id}" class="${s.status === 'new' ? 'unread' : ''}">
+      <strong>${s.name}</strong>
+      （${new Date(s.timestamp).toLocaleString("ja-JP")}）<br />
+      ${s.message}<br /><br />
 
-          <button class="mark-read">既読にする</button>
-          <button class="mark-unread">未読に戻す</button>
-        </li>`
-      )
-      .join("");
+      <button class="mark-read">既読にする</button>
+      <button class="mark-unread">未読に戻す</button>
+      <button class="delete-btn">削除</button>
+    </li>`
+  )
+  .join("");
+
 
     addClickEvents();
   } catch (err) {
