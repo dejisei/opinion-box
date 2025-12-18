@@ -1,15 +1,18 @@
-// 管理者パスワードを最初に取得
+// ===== 管理者パスワードチェック（必ず最初）=====
 let ADMIN_PASSWORD = sessionStorage.getItem("adminPassword");
 
 if (!ADMIN_PASSWORD) {
   ADMIN_PASSWORD = prompt("管理者パスワードを入力してください");
- if (!ADMIN_PASSWORD) {
-  alert("パスワードが必要です");
-  throw new Error("No admin password");
-}
+
+  if (!ADMIN_PASSWORD) {
+    alert("パスワードが必要です");
+    throw new Error("No admin password");
+  }
 
   sessionStorage.setItem("adminPassword", ADMIN_PASSWORD);
 }
+// ===== ここまで =====
+
 
 
 const list = document.getElementById("suggestion-list");
