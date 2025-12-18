@@ -42,7 +42,7 @@ function addClickEvents() {
       e.target.closest("li").classList.remove("unread");
     });
   });
-
+//未読に変える
   document.querySelectorAll(".mark-unread").forEach((btn) => {
     btn.addEventListener("click", async (e) => {
       const id = e.target.closest("li").dataset.id;
@@ -50,6 +50,35 @@ function addClickEvents() {
       e.target.closest("li").classList.add("unread");
     });
   });
+//削除するyo!!!!!!
+  document.querySelectorAll(".delete-btn").forEach((btn) => {
+  btn.addEventListener("click", async (e) => {
+    const li = e.target.closest("li");
+    const id = li.dataset.id;
+
+    // 確認ダイアログ
+    if (!confirm("この意見を削除しますか？")) return;
+
+    try {
+      const res = await fetch(`${API_URL}/${id}`, {
+        method: "DELETE",
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text);
+      }
+
+      // 画面から即削除
+      li.remove();
+
+    } catch (err) {
+      console.error("削除失敗:", err);
+      alert("削除に失敗しました");
+    }
+  });
+});
+
 }
 
 // API へ PATCH（サーバーの仕様に完全準拠）
