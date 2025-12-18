@@ -1,9 +1,15 @@
-const ADMIN_PASSWORD = prompt("管理者パスワードを入力してください");
+// 管理者パスワードを最初に取得
+let ADMIN_PASSWORD = sessionStorage.getItem("adminPassword");
 
 if (!ADMIN_PASSWORD) {
-  alert("パスワードが必要です");
-  throw new Error("No password");
+  ADMIN_PASSWORD = prompt("管理者パスワードを入力してください");
+  if (!ADMIN_PASSWORD) {
+    alert("パスワードが必要です");
+    throw new Error("No admin password");
+  }
+  sessionStorage.setItem("adminPassword", ADMIN_PASSWORD);
 }
+
 
 const list = document.getElementById("suggestion-list");
 
@@ -12,7 +18,12 @@ const API_URL = "https://opinion-box.onrender.com/api/suggestions";
 // 投稿一覧取得
 async function loadSuggestions() {
   try {
-    const res = await fetch(API_URL);
+    const res = await fetch(API_URL, {
+  headers: {
+    "x-admin-password": ADMIN_PASSWORD
+  }
+});
+
     if (!res.ok) throw new Error("サーバーからの取得に失敗しました");
 
     const suggestions = await res.json();
@@ -68,8 +79,11 @@ function addClickEvents() {
 
     try {
       const res = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-      });
+  method: "DELETE",
+  headers: {
+    "x-admin-password": ADMIN_PASSWORD
+  }
+});
 
       if (!res.ok) {
         const text = await res.text();
@@ -96,8 +110,11 @@ async function updateStatus(id, status) {
 
   try {
     const res = await fetch(endpoint, {
-      method: "PATCH",
-    });
+  method: "PATCH",
+  headers: {
+    "x-admin-password": ADMIN_PASSWORD
+  }
+});
 
     if (!res.ok) {
       const text = await res.text();
